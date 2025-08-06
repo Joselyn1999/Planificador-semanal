@@ -6,7 +6,7 @@ import Footer from "../components/Landing/Footer";
 
 function Landing() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-indigo-50 to-white text-gray-800">
       <Header />
       <main className="flex-grow">
         <Hero />
