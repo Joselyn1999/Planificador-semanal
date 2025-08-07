@@ -1,29 +1,41 @@
 import React from "react";
-import { Droppable } from "react-beautiful-dnd";
+import { Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 
 function DayColumn({ diaId, dia, onDeleteTask }) {
   return (
     <Droppable droppableId={diaId}>
-      {(provided, snapshot) => (
+      {(droppableProvided) => (
         <div
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          className={`bg-white rounded-lg p-4 shadow min-h-[160px] flex flex-col transition ${
-            snapshot.isDraggingOver ? "ring-2 ring-indigo-300" : ""
-          }`}
+          ref={droppableProvided.innerRef}
+          {...droppableProvided.droppableProps}
+          className="bg-white p-4 rounded-lg shadow-md min-h-[200px] flex flex-col"
         >
-          <h3 className="font-semibold mb-3">{dia.nombre}</h3>
-          <div className="flex-1">
-            {dia.tareas.map((tarea, index) => (
-              <TaskCard
+          <h2 className="font-semibold text-lg mb-3">{dia.nombre}</h2>
+
+          <div className="flex-1 space-y-2">
+            {(dia.tareas || []).map((tarea, index) => (
+              <Draggable
                 key={tarea.id}
-                tarea={tarea}
+                draggableId={tarea.id}
                 index={index}
-                onDelete={() => onDeleteTask(diaId, tarea.id)}
-              />
+              >
+                {(draggableProvided) => (
+                  <div
+                    ref={draggableProvided.innerRef}
+                    {...draggableProvided.draggableProps}
+                    {...draggableProvided.dragHandleProps}
+                  >
+                    <TaskCard
+                      tarea={tarea}
+                      onDelete={() => onDeleteTask(diaId, tarea.id)}
+                    />
+                  </div>
+                )}
+              </Draggable>
             ))}
-            {provided.placeholder}
+
+            {droppableProvided.placeholder}
           </div>
         </div>
       )}
