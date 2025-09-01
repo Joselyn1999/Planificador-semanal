@@ -1,7 +1,10 @@
-// src/firebase/config.js
+// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
+// Tu configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA5_r51QxPUxlVsvXv4EiYoS8sbCCPVksA",
   authDomain: "planificador-semanal-a933a.firebaseapp.com",
@@ -15,8 +18,13 @@ const firebaseConfig = {
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inicializa Auth y proveedor Google
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+// Analytics solo si está soportado en navegador
+let analytics;
+isSupported().then(supported => {
+  if (supported) analytics = getAnalytics(app);
+});
 
-export { auth, provider };
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { app, auth, db, analytics };
