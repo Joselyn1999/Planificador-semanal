@@ -26,11 +26,6 @@ const features = [
     desc: "Código modular pensado para mantener y escalar el proyecto.",
     icon: "🧩",
   },
-  {
-    title: "Fácil de desplegar",
-    desc: "Sube tu proyecto a Vercel o Netlify en minutos.",
-    icon: "🚀",
-  },
 ];
 
 function Features() {

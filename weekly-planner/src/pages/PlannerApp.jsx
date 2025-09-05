@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+// Importa useNavigate para la redirección con React Router
+import { useNavigate } from "react-router-dom";
 
 // Simulación mejorada de DragDropContext con funcionalidad real
 const DragDropContext = ({ children, onDragEnd }) => {
@@ -331,7 +333,7 @@ const DayColumn = ({ diaId, dia, fecha, onDeleteTask, onAddTaskToDay, isToday, i
               onChange={(e) => setNewTaskText(e.target.value)}
               placeholder="Nueva tarea..."
               className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500/20 
-                       focus:border-blue-500 outline-none transition-all duration-200 text-sm"
+                         focus:border-blue-500 outline-none transition-all duration-200 text-sm"
               autoFocus
             />
             
@@ -341,13 +343,13 @@ const DayColumn = ({ diaId, dia, fecha, onDeleteTask, onAddTaskToDay, isToday, i
                 value={newTaskTime}
                 onChange={(e) => setNewTaskTime(e.target.value)}
                 className="p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500/20 
-                         focus:border-blue-500 outline-none transition-all duration-200 text-sm"
+                           focus:border-blue-500 outline-none transition-all duration-200 text-sm"
               />
               <select
                 value={newTaskPriority}
                 onChange={(e) => setNewTaskPriority(e.target.value)}
                 className="p-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500/20 
-                         focus:border-blue-500 outline-none transition-all duration-200 text-sm"
+                           focus:border-blue-500 outline-none transition-all duration-200 text-sm"
               >
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
@@ -359,8 +361,8 @@ const DayColumn = ({ diaId, dia, fecha, onDeleteTask, onAddTaskToDay, isToday, i
               <button
                 onClick={handleSubmit}
                 className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-3 
-                         rounded-lg font-medium hover:shadow-lg transition-all duration-200 text-sm
-                         transform hover:-translate-y-0.5"
+                           rounded-lg font-medium hover:shadow-lg transition-all duration-200 text-sm
+                           transform hover:-translate-y-0.5"
               >
                 Agregar
               </button>
@@ -442,6 +444,9 @@ function PlannerApp() {
   const [dias, setDias] = useState(() => INITIAL_DATA);
   const [lastMoved, setLastMoved] = useState(null);
   
+  // Opción 1: Usa `useNavigate` de React Router
+  // const navigate = useNavigate();
+
   const [currentWeek, setCurrentWeek] = useState(() => {
     const today = new Date();
     const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
@@ -469,6 +474,20 @@ function PlannerApp() {
     const today = new Date();
     const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
     setCurrentWeek(startOfWeek);
+  };
+  
+  const handleLogout = () => {
+   
+    
+    // --- OPCIÓN 1: USANDO REACT ROUTER (Recomendado) ---
+    // Limpia los datos del usuario (ej. token)
+    // localStorage.removeItem('authToken');
+    // Navega a la ruta de la landing page (ej. '/login' o '/')
+    // navigate('/');
+
+    // --- OPCIÓN 2: USANDO window.location (Cualquier app JS) ---
+    // Establece la URL a la que quieres redirigir
+    window.location.href = '/'; 
   };
 
   // Simulación del guardado automático
@@ -593,7 +612,7 @@ function PlannerApp() {
             
             <div className="flex items-center gap-6">
               {/* Estadísticas */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="hidden lg:grid grid-cols-2 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">{totalTasks}</div>
                   <div className="text-xs text-gray-500">Tareas</div>
@@ -604,7 +623,7 @@ function PlannerApp() {
                 </div>
               </div>
               
-              {/* Navegación de semana */}
+              {/* Navegación de semana y botón de cerrar sesión */}
               <div className="flex items-center gap-2 bg-white/70 rounded-2xl p-2 shadow-lg">
                 <button 
                   onClick={goToPreviousWeek}
@@ -628,6 +647,16 @@ function PlannerApp() {
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                
+                {/* Botón de cerrar sesión */}
+                <button
+                  onClick={handleLogout}
+                  className="p-2 ml-4 text-red-500 hover:bg-red-50 rounded-xl transition-colors duration-200"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
                 </button>
               </div>

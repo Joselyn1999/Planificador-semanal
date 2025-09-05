@@ -1,18 +1,40 @@
-import { auth, provider } from "../firebase/config";
-import { signInWithPopup } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+// src/components/Login.jsx
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { auth, provider, db } from "../firebase/config";
+import { signInWithPopup } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
-function Login() {
+export default function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
+      // 👤 Login con Google
       const result = await signInWithPopup(auth, provider);
-      console.log("Usuario logueado:", result.user);
-      // Pequeño delay para mostrar el estado de éxito
+      const user = result.user;
+      console.log("Usuario logueado:", user);
+
+      // 📌 Referencia al documento del usuario (usamos UID)
+      const userRef = doc(db, "usuarios", user.uid);
+
+      // 📝 Guardamos sus datos en Firestore (merge:true para actualizar si existe)
+      await setDoc(
+        userRef,
+        {
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+          createdAt: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      console.log("Usuario guardado en Firestore ✅");
+
+      // Navegar a la app después del login
       setTimeout(() => {
         navigate("/app");
       }, 800);
@@ -33,15 +55,12 @@ function Login() {
       <div className="absolute top-0 left-0 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
       <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse delay-1000"></div>
       <div className="absolute -bottom-32 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-500"></div>
-      
+
       {/* Contenedor principal */}
       <div className="relative">
-        {/* Card principal con glassmorphism */}
         <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8 max-w-md w-full transform transition-all duration-300 hover:scale-[1.02] hover:shadow-3xl">
-          
           {/* Header */}
           <div className="text-center mb-8">
-            {/* Icono del planificador */}
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform transition-transform duration-300 hover:rotate-6">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -70,10 +89,7 @@ function Login() {
               disabled={isLoading}
               className={`
                 w-full group relative overflow-hidden
-                ${isLoading 
-                  ? 'bg-gray-100 cursor-not-allowed' 
-                  : 'bg-white hover:bg-gray-50 active:bg-gray-100'
-                }
+                ${isLoading ? 'bg-gray-100 cursor-not-allowed' : 'bg-white hover:bg-gray-50 active:bg-gray-100'}
                 border-2 border-gray-200 rounded-xl
                 px-6 py-4 transition-all duration-300
                 shadow-lg hover:shadow-xl hover:-translate-y-1
@@ -97,11 +113,6 @@ function Login() {
                   {isLoading ? 'Iniciando sesión...' : 'Continuar con Google'}
                 </span>
               </div>
-              
-              {/* Efecto de hover */}
-              {!isLoading && (
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-              )}
             </button>
 
             {/* Botón volver */}
@@ -130,5 +141,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;
